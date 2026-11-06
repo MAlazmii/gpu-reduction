@@ -14,6 +14,22 @@ CPU/GPU benchmark reproduction passed. See [validation](docs/validation.md) and
 and limitations. The separate [Linux CPU workflow](https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml)
 checks GCC and Clang; inspect the run for the commit you intend to use.
 
+## Recorded A100 results
+
+![Measured CPU, GPU-resident and GPU-with-transfers timings on an A100, with raw repetitions and min–max ranges](docs/images/a100-timings.png)
+
+Five repetitions per size from the recorded run. The logarithmic axis shows elapsed
+milliseconds; smaller is faster. For 1,048,577 values, the medians were 4.161 ms for
+the single-thread CPU reference, 0.025 ms for resident GPU work and 0.846 ms with
+transfers. These measurements do not establish peak performance or general speedup;
+the host CPU model and clock/contention controls were not captured.
+
+The figure is generated directly from [raw measurements](results/a100-validation.json).
+To reproduce it, install Matplotlib in your own environment and run
+`python3 scripts/plot_results.py NEW_DIRECTORY`. The script checks the stored
+summaries against all five samples and writes PNG and SVG files without overwriting
+an existing directory. Plotting is optional; building and testing need no Matplotlib.
+
 ## Run the CPU reference
 
 Requires a C++17 compiler, Make and Python 3.9+; no Python packages required.

@@ -1,8 +1,8 @@
-# Private GitHub validation
+# GitHub validation and release
 
 Repository: [MAlazmii/gpu-reduction](https://github.com/MAlazmii/gpu-reduction).
-The owner authorized private upload and Linux checks on 6 November 2026.
-Public visibility is not part of this upload.
+The project was validated privately before its public release review.
+The release includes only this independent implementation and curated evidence.
 
 The Ubuntu 24.04 workflow builds with GCC and Clang independently. Each job runs
 all CPU/evidence tests, the CPU address/undefined-behavior sanitizer contract suite
