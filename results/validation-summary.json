@@ -1,0 +1,30 @@
+{
+  "verified_on": "2026-11-06",
+  "environment": "Apple M1 Mac / Apple clang 21 / Python 3.11",
+  "cpu_tests": {
+    "status": "PASS",
+    "methods": 10
+  },
+  "cpu_sanitizers": {
+    "status": "PASS",
+    "contract_test_methods": 4
+  },
+  "cpu_benchmark": {
+    "status": "PASS",
+    "sizes": [
+      4096,
+      65537,
+      1048577
+    ],
+    "repetitions_each": 5
+  },
+  "independent_review": "Two provenance findings fixed with failing-then-passing regressions",
+  "clean_cpu_rebuild": "PASS",
+  "cuda_compile": "NOT RUN",
+  "cuda_execution": "NOT RUN",
+  "compute_sanitizer": "NOT RUN",
+  "gpu_performance": "NOT RUN",
+  "github_ci": "PREPARED, NOT RUN",
+  "gpu_testing": "Deferred by owner; no remote compute performed",
+  "paid_usage_enabled": false
+}

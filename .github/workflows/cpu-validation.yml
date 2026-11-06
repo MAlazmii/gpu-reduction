@@ -1,0 +1,39 @@
+name: cpu-validation
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cpu-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  cpu:
+    name: CPU / ${{ matrix.compiler }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Build and CPU tests
+        run: |
+          set -euo pipefail
+          mkdir -p results/ci
+          make CXX=${{ matrix.compiler }} test 2>&1 | tee results/ci/cpu-tests.txt
+          make CXX=${{ matrix.compiler }} sanitize 2>&1 | tee results/ci/cpu-sanitizers.txt
+      - name: Reproduce CPU measurements
+        run: python3 scripts/benchmark.py results/ci/benchmark --backend cpu --repeats 3
+      - name: Preserve CPU evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cpu-${{ matrix.compiler }}-${{ github.sha }}
+          path: |
+            results/ci/
+            build/*.build.json
+          retention-days: 14
+          if-no-files-found: warn

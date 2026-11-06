@@ -1,0 +1,7 @@
+/build/
+/results/local-*/
+/results/eidf-*/
+/results/ci/
+__pycache__/
+*.pyc
+.DS_Store
