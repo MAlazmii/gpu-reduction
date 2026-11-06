@@ -39,7 +39,8 @@ stands in for CUDA correctness. Required GPU tests fail if CUDA is unavailable.
 
 ## Safety and release boundary
 Work only in this separate repository. Use GitHub's no-reply commit email.
-No remote creation/publication or GPU resource provisioning in this local stage.
+No remote repository publication or new GPU resource provisioning. Validation may
+use an isolated copy within the owner-authorized existing EIDF allocation.
 No billing changes, paid services, self-hosted PR execution or cluster jobs without
 confirmed existing-resource authorization. NVIDIA compilation/runtime/sanitizers
 are NOT RUN until actually observed. The existing Mac can validate the CPU path.
@@ -74,3 +75,9 @@ mismatched to the executable. GPU-only checks must be distinguished from CPU CI.
 
 CUDA implementation task means source and validation entry points exist; it does
 not mark CUDA compilation or execution complete. See validation.md for gates.
+
+- EIDF validation resumed after the owner opened a working shared SSH connection.
+  Source archive copied into a fresh isolated directory; checksum verified. Linux
+  CPU tests/sanitizers/benchmarks and CUDA 12/13 compilation passed. GPU execution
+  remains blocked by no visible device and missing GPU-service configuration.
+  No original coursework, driver, billing or cluster resources were changed.

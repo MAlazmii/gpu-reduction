@@ -7,9 +7,9 @@ accumulation, verify every result, and measure GPU-resident work separately from
 host-to-device transfer plus execution. A single-thread CPU implementation provides
 a runnable reference and a clearly bounded comparison.
 
-**Development status:** CPU implementation tested locally. CUDA source is prepared;
-GPU compilation, execution and Compute Sanitizer results must be recorded in
-[validation](docs/validation.md) before calling this a validated GPU project.
+**Development status:** CPU checks passed on Mac and Linux. CUDA compilation passed
+with CUDA 12.0 and 13.0 on an EIDF VM. Actual GPU execution and Compute Sanitizer
+remain unavailable pending GPU-service access; see [validation](docs/validation.md).
 No GPU speedup or hardware performance result is claimed here.
 
 ## Run the CPU reference
@@ -31,8 +31,10 @@ samples with `"sum":100032768`. Timings vary; tiny cases may measure zero clock 
 ## Build and validate on NVIDIA hardware
 
 Requires a compatible NVIDIA GPU/driver and CUDA Toolkit with `nvcc` and
-`compute-sanitizer`. The initial build target is Volta or newer (`sm_70`). Select
-an architecture supported by both the device and installed compiler.
+`compute-sanitizer`. The default build target is `sm_70`, tested with CUDA 12.0. CUDA 13.0 no longer
+lists that target; `sm_80` was compiled successfully with it. Select an architecture
+supported by both the device and installed compiler. See the tested commands in
+[validation](docs/validation.md).
 
 ```sh
 make clean
