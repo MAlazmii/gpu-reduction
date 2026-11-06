@@ -11,7 +11,8 @@ a runnable reference and a clearly bounded comparison.
 40 GB, the CUDA correctness suite, all four Compute Sanitizer tools and repeated
 CPU/GPU benchmark reproduction passed. See [validation](docs/validation.md) and
 [recorded measurements](results/a100-validation.json) for the exact tested source
-and limitations. GitHub CI has been prepared but has not run for this project.
+and limitations. The separate [Linux CPU workflow](https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml)
+checks GCC and Clang; inspect the run for the commit you intend to use.
 
 ## Run the CPU reference
 

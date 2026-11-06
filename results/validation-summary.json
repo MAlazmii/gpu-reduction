@@ -24,7 +24,7 @@
   "cuda_execution": "PASS on NVIDIA A100-SXM4-40GB; four contract methods",
   "compute_sanitizer": "PASS: memcheck/racecheck/initcheck/synccheck; three cases each",
   "gpu_performance": "Benchmark reproduction PASS: three sizes x five repeats; no general speedup claim",
-  "github_ci": "PREPARED, NOT RUN",
+  "github_ci": "Exact-commit results recorded in the linked GitHub Actions workflow",
   "gpu_testing": "Completed using existing EIDF quota and original /kubernetes/config via login shell",
   "paid_usage_enabled": false,
   "eidf": {
@@ -54,5 +54,6 @@
     "cuda13_execution": "PASS on GPU service with nvcc 13.0.48",
     "artifacts": "results/eidf-2026-11-06-71a3fe7/"
   },
-  "gpu_evidence": "results/a100-validation.json"
+  "gpu_evidence": "results/a100-validation.json",
+  "github_workflow_url": "https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml"
 }

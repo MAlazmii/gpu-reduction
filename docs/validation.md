@@ -18,7 +18,7 @@ VM's existing login-shell configuration, without changing the credentials.
 | CUDA numerical tests | PASS on A100 | Four test methods; all patterns, block sizes, partial blocks and grid-stride cases |
 | Compute Sanitizer | PASS on A100 | memcheck, racecheck, initcheck, synccheck; three cases each, zero reported errors/hazards |
 | GPU benchmark reproduction | PASS for recorded run | Three sizes, five repeats per backend; resident and transfer-inclusive timings; no peak-performance claim |
-| GitHub CPU workflow | PREPARED, NOT RUN | No GPU repository has been uploaded or published |
+| GitHub CPU workflow | Check exact revision in Actions | Ubuntu 24.04 with GCC and Clang; [workflow](https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml) |
 | Public release | NOT PUBLISHED | Hardware gates passed for tested source; GitHub CI and exact publication review remain |
 
 Local raw artifacts belong under ignored `results/local-*`. Each benchmark report
@@ -108,8 +108,9 @@ promise that every CUDA 13/driver combination is supported.
 Public-safe raw samples and source hashes: [a100-validation.json](../results/a100-validation.json).
 Full private artifacts: `results/eidf-gpu-2026-11-06-71a3fe7/`.
 Host CPU model and clock/contention controls were not captured; do not turn these
-measurements into hardware-independent speedup claims. The project remains local;
-GitHub workflow checks have not yet been run.
+measurements into hardware-independent speedup claims. The GitHub repository is private. Its [CPU workflow](https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml)
+checks uploaded commits separately from this recorded GPU run; use the exact run
+conclusion rather than treating historical evidence as validation of future edits.
 
 After verified retrieval, the temporary job, its pod and its source ConfigMap were
 removed. The original VM configuration and all other workloads were left unchanged.
