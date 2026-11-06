@@ -1,0 +1,412 @@
+{
+  "verified_on": "2026-11-06",
+  "source_commit": "71a3fe79eb34ffaf80ebd0918db80813a798fcaa",
+  "source_archive_sha256": "01ecb9b28347a7ccdcdccf2a9d2c36b9ab22b3bf24275522dd5e3a685099f75d",
+  "hardware": {
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "gpu_memory_mib": 40960,
+    "compute_capability": "8.0",
+    "driver_version": "570.124.06",
+    "cpu_allocation": 2,
+    "memory_allocation_gib": 2,
+    "cpu_model": "not captured"
+  },
+  "toolchain": {
+    "cuda_nvcc": "13.0.48",
+    "gnu_cpp": "13.3.0",
+    "python": "3.12.3",
+    "target": "sm_80"
+  },
+  "checks": {
+    "cpu_tests": {
+      "status": "PASS",
+      "methods": 10
+    },
+    "cpu_address_undefined_sanitizers": {
+      "status": "PASS",
+      "methods": 4
+    },
+    "cuda_tests": {
+      "status": "PASS",
+      "methods": 4
+    },
+    "compute_sanitizer": {
+      "status": "PASS",
+      "tools": [
+        "memcheck",
+        "racecheck",
+        "initcheck",
+        "synccheck"
+      ],
+      "cases_per_tool": [
+        1,
+        257,
+        262161
+      ],
+      "reported_errors": 0,
+      "reported_race_hazards": 0,
+      "threads_per_case": 256
+    },
+    "benchmark": {
+      "status": "complete",
+      "sizes": [
+        4096,
+        65537,
+        1048577
+      ],
+      "repeats_per_backend_per_size": 5,
+      "all_sample_sums_validated": true
+    }
+  },
+  "scope": [
+    "One GPU, one job; no multi-GPU or scaling claim",
+    "CPU baseline is one sequential thread, not an optimized multithread library",
+    "Host CPU model, clock control and external contention were not captured; timings are a bounded reproduction result",
+    "Setup and allocation excluded; transfer path uses pageable host memory"
+  ],
+  "source_sha256": {
+    "src/cpu.cpp": "a6124055f3fa8ef5b376aa02132d79552e43d3ef196a23f4d5fb10525c2dd091",
+    "src/cuda.cu": "3b427b50979709c09e93bf94e147fde09be1487b7ebebf47f74835746387ea52",
+    "src/main.cpp": "c270f210fc4df91a66a1b9a440e2c1b3e9b9939f25cd3329d06e30174b4823a0",
+    "src/reduction.hpp": "0d566f81995bc15fea0c87fa223ae6f6c6f539eb1249bf8dceaf65aa02ea8cfe",
+    "scripts/benchmark.py": "74797a7877c703571a7390b9c264cbb92e0e0032c5e70acd72efb99d5e6e075b",
+    "scripts/build.py": "5b0d255cddc228f34594c6507cb9be9041d5d0f6cfcfbb05c31d25e46cce29ec",
+    "scripts/gpu_sanitize.py": "13707f30d82f1cd23c90d1d1df213e7702a37b79fc0af49456500ceffbae5372",
+    "tests/test_build.py": "5081a49573938b6572bc4296f36d0e0d4c7ecfbe92d9cf5c6eae8516825a5d8e",
+    "tests/test_evidence.py": "08d3aef1654fde3945b1bdf09feaf0adfe660228bfa631cfae79c2a1247124d4",
+    "tests/test_reduction.py": "cba3def93ada97385b79b8678166b822e2d1c53512a0e2d068eecea08a96281e"
+  },
+  "measurements": [
+    {
+      "raw": {
+        "schema_version": 1,
+        "backend": "cpu",
+        "n": 4096,
+        "pattern": "cancellation",
+        "precision": "float32 input / float64 accumulation",
+        "threads": null,
+        "expected": 2048,
+        "validation": "pass",
+        "device": "single CPU thread",
+        "runtime_version": 0,
+        "driver_version": 0,
+        "compute_capability": "0.0",
+        "warmups_per_path": 1,
+        "samples": [
+          {
+            "sum": 2048,
+            "cpu_seconds": 1.5979e-05
+          },
+          {
+            "sum": 2048,
+            "cpu_seconds": 1.589e-05
+          },
+          {
+            "sum": 2048,
+            "cpu_seconds": 1.591e-05
+          },
+          {
+            "sum": 2048,
+            "cpu_seconds": 1.5889e-05
+          },
+          {
+            "sum": 2048,
+            "cpu_seconds": 1.591e-05
+          }
+        ]
+      },
+      "summary": {
+        "cpu_seconds": {
+          "min": 1.5889e-05,
+          "median": 1.591e-05,
+          "max": 1.5979e-05,
+          "includes_zero_resolution_sample": false
+        }
+      }
+    },
+    {
+      "raw": {
+        "schema_version": 1,
+        "backend": "cpu",
+        "n": 65537,
+        "pattern": "cancellation",
+        "precision": "float32 input / float64 accumulation",
+        "threads": null,
+        "expected": 100032768,
+        "validation": "pass",
+        "device": "single CPU thread",
+        "runtime_version": 0,
+        "driver_version": 0,
+        "compute_capability": "0.0",
+        "warmups_per_path": 1,
+        "samples": [
+          {
+            "sum": 100032768,
+            "cpu_seconds": 0.000262447
+          },
+          {
+            "sum": 100032768,
+            "cpu_seconds": 0.000254993
+          },
+          {
+            "sum": 100032768,
+            "cpu_seconds": 0.000265663
+          },
+          {
+            "sum": 100032768,
+            "cpu_seconds": 0.000254181
+          },
+          {
+            "sum": 100032768,
+            "cpu_seconds": 0.000263168
+          }
+        ]
+      },
+      "summary": {
+        "cpu_seconds": {
+          "min": 0.000254181,
+          "median": 0.000262447,
+          "max": 0.000265663,
+          "includes_zero_resolution_sample": false
+        }
+      }
+    },
+    {
+      "raw": {
+        "schema_version": 1,
+        "backend": "cpu",
+        "n": 1048577,
+        "pattern": "cancellation",
+        "precision": "float32 input / float64 accumulation",
+        "threads": null,
+        "expected": 100524288,
+        "validation": "pass",
+        "device": "single CPU thread",
+        "runtime_version": 0,
+        "driver_version": 0,
+        "compute_capability": "0.0",
+        "warmups_per_path": 1,
+        "samples": [
+          {
+            "sum": 100524288,
+            "cpu_seconds": 0.004198054
+          },
+          {
+            "sum": 100524288,
+            "cpu_seconds": 0.004160896
+          },
+          {
+            "sum": 100524288,
+            "cpu_seconds": 0.004151679
+          },
+          {
+            "sum": 100524288,
+            "cpu_seconds": 0.004166727
+          },
+          {
+            "sum": 100524288,
+            "cpu_seconds": 0.004153652
+          }
+        ]
+      },
+      "summary": {
+        "cpu_seconds": {
+          "min": 0.004151679,
+          "median": 0.004160896,
+          "max": 0.004198054,
+          "includes_zero_resolution_sample": false
+        }
+      }
+    },
+    {
+      "raw": {
+        "schema_version": 1,
+        "backend": "cuda",
+        "n": 4096,
+        "pattern": "cancellation",
+        "precision": "float32 input / float64 accumulation",
+        "threads": 256,
+        "expected": 2048,
+        "validation": "pass",
+        "device": "NVIDIA A100-SXM4-40GB",
+        "runtime_version": 13000,
+        "driver_version": 13000,
+        "compute_capability": "8.0",
+        "warmups_per_path": 1,
+        "samples": [
+          {
+            "sum": 2048,
+            "transfer_sum": 2048,
+            "resident_seconds": 1.7216000705957414e-05,
+            "transfer_seconds": 6.6604e-05
+          },
+          {
+            "sum": 2048,
+            "transfer_sum": 2048,
+            "resident_seconds": 1.6896000131964683e-05,
+            "transfer_seconds": 4.1637e-05
+          },
+          {
+            "sum": 2048,
+            "transfer_sum": 2048,
+            "resident_seconds": 1.600000075995922e-05,
+            "transfer_seconds": 4.0525e-05
+          },
+          {
+            "sum": 2048,
+            "transfer_sum": 2048,
+            "resident_seconds": 1.635199971497059e-05,
+            "transfer_seconds": 4.0164e-05
+          },
+          {
+            "sum": 2048,
+            "transfer_sum": 2048,
+            "resident_seconds": 1.5807999297976493e-05,
+            "transfer_seconds": 4.1337e-05
+          }
+        ]
+      },
+      "summary": {
+        "resident_seconds": {
+          "min": 1.5807999297976493e-05,
+          "median": 1.635199971497059e-05,
+          "max": 1.7216000705957414e-05,
+          "includes_zero_resolution_sample": false
+        },
+        "transfer_seconds": {
+          "min": 4.0164e-05,
+          "median": 4.1337e-05,
+          "max": 6.6604e-05,
+          "includes_zero_resolution_sample": false
+        }
+      }
+    },
+    {
+      "raw": {
+        "schema_version": 1,
+        "backend": "cuda",
+        "n": 65537,
+        "pattern": "cancellation",
+        "precision": "float32 input / float64 accumulation",
+        "threads": 256,
+        "expected": 100032768,
+        "validation": "pass",
+        "device": "NVIDIA A100-SXM4-40GB",
+        "runtime_version": 13000,
+        "driver_version": 13000,
+        "compute_capability": "8.0",
+        "warmups_per_path": 1,
+        "samples": [
+          {
+            "sum": 100032768,
+            "transfer_sum": 100032768,
+            "resident_seconds": 2.067199908196926e-05,
+            "transfer_seconds": 0.000128768
+          },
+          {
+            "sum": 100032768,
+            "transfer_sum": 100032768,
+            "resident_seconds": 2.1824000403285027e-05,
+            "transfer_seconds": 0.000127095
+          },
+          {
+            "sum": 100032768,
+            "transfer_sum": 100032768,
+            "resident_seconds": 2.1503999829292296e-05,
+            "transfer_seconds": 0.000128329
+          },
+          {
+            "sum": 100032768,
+            "transfer_sum": 100032768,
+            "resident_seconds": 2.1856000646948815e-05,
+            "transfer_seconds": 0.000132836
+          },
+          {
+            "sum": 100032768,
+            "transfer_sum": 100032768,
+            "resident_seconds": 2.1503999829292296e-05,
+            "transfer_seconds": 0.000127697
+          }
+        ]
+      },
+      "summary": {
+        "resident_seconds": {
+          "min": 2.067199908196926e-05,
+          "median": 2.1503999829292296e-05,
+          "max": 2.1856000646948815e-05,
+          "includes_zero_resolution_sample": false
+        },
+        "transfer_seconds": {
+          "min": 0.000127095,
+          "median": 0.000128329,
+          "max": 0.000132836,
+          "includes_zero_resolution_sample": false
+        }
+      }
+    },
+    {
+      "raw": {
+        "schema_version": 1,
+        "backend": "cuda",
+        "n": 1048577,
+        "pattern": "cancellation",
+        "precision": "float32 input / float64 accumulation",
+        "threads": 256,
+        "expected": 100524288,
+        "validation": "pass",
+        "device": "NVIDIA A100-SXM4-40GB",
+        "runtime_version": 13000,
+        "driver_version": 13000,
+        "compute_capability": "8.0",
+        "warmups_per_path": 1,
+        "samples": [
+          {
+            "sum": 100524288,
+            "transfer_sum": 100524288,
+            "resident_seconds": 2.4992000311613085e-05,
+            "transfer_seconds": 0.001889534
+          },
+          {
+            "sum": 100524288,
+            "transfer_sum": 100524288,
+            "resident_seconds": 2.4927999824285508e-05,
+            "transfer_seconds": 0.000838836
+          },
+          {
+            "sum": 100524288,
+            "transfer_sum": 100524288,
+            "resident_seconds": 2.438399940729141e-05,
+            "transfer_seconds": 0.00084688
+          },
+          {
+            "sum": 100524288,
+            "transfer_sum": 100524288,
+            "resident_seconds": 2.4512000381946565e-05,
+            "transfer_seconds": 0.000845769
+          },
+          {
+            "sum": 100524288,
+            "transfer_sum": 100524288,
+            "resident_seconds": 2.4512000381946565e-05,
+            "transfer_seconds": 0.000845757
+          }
+        ]
+      },
+      "summary": {
+        "resident_seconds": {
+          "min": 2.438399940729141e-05,
+          "median": 2.4512000381946565e-05,
+          "max": 2.4992000311613085e-05,
+          "includes_zero_resolution_sample": false
+        },
+        "transfer_seconds": {
+          "min": 0.000838836,
+          "median": 0.000845769,
+          "max": 0.001889534,
+          "includes_zero_resolution_sample": false
+        }
+      }
+    }
+  ],
+  "cleanup": "Temporary validation job and input ConfigMap removed after verified evidence download"
+}

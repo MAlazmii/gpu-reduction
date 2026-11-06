@@ -29,7 +29,8 @@ repetition; this ordering is fixed and must be reported when interpreting result
 
 CPU is one optimized sequential thread. It is not a tuned multithread library
 baseline. CUDA uses float64 accumulation, whose throughput varies across devices.
-This first version contains no comparative performance claims or invented plots.
+The first A100 run is saved in `results/a100-validation.json`. It establishes
+execution and measurement reproduction, not peak performance or general speedup.
 Future profiling should compare with a library such as CUB at matched precision
 before describing the custom kernel as competitive.
 

@@ -21,11 +21,11 @@
   "independent_review": "Two provenance findings fixed with failing-then-passing regressions",
   "clean_cpu_rebuild": "PASS",
   "cuda_compile": "PASS: CUDA 12.0.140 / sm_70 and CUDA 13.0.88 / sm_80",
-  "cuda_execution": "NOT RUN: VM device probe failed; GPU Service connection unavailable",
-  "compute_sanitizer": "NOT RUN",
-  "gpu_performance": "NOT RUN",
+  "cuda_execution": "PASS on NVIDIA A100-SXM4-40GB; four contract methods",
+  "compute_sanitizer": "PASS: memcheck/racecheck/initcheck/synccheck; three cases each",
+  "gpu_performance": "Benchmark reproduction PASS: three sizes x five repeats; no general speedup claim",
   "github_ci": "PREPARED, NOT RUN",
-  "gpu_testing": "Owner authorized existing EIDF resources; GPU Service kubeconfig required",
+  "gpu_testing": "Completed using existing EIDF quota and original /kubernetes/config via login shell",
   "paid_usage_enabled": false,
   "eidf": {
     "source_commit": "71a3fe79eb34ffaf80ebd0918db80813a798fcaa",
@@ -49,9 +49,10 @@
       "repeats_each": 5
     },
     "downloaded_source_fingerprints_match": true,
-    "gpu_jobs_submitted": 0,
-    "cuda_device_probe": "FAIL: no CUDA-capable device is detected",
-    "cuda13_execution": "NOT RUN",
+    "gpu_jobs_submitted": 1,
+    "cuda_device_probe": "Initial VM-only probe failed as expected; GPU service A100 execution subsequently passed",
+    "cuda13_execution": "PASS on GPU service with nvcc 13.0.48",
     "artifacts": "results/eidf-2026-11-06-71a3fe7/"
-  }
+  },
+  "gpu_evidence": "results/a100-validation.json"
 }

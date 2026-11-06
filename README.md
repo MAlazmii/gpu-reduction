@@ -7,10 +7,11 @@ accumulation, verify every result, and measure GPU-resident work separately from
 host-to-device transfer plus execution. A single-thread CPU implementation provides
 a runnable reference and a clearly bounded comparison.
 
-**Development status:** CPU checks passed on Mac and Linux. CUDA compilation passed
-with CUDA 12.0 and 13.0 on an EIDF VM. Actual GPU execution and Compute Sanitizer
-remain unavailable pending GPU-service access; see [validation](docs/validation.md).
-No GPU speedup or hardware performance result is claimed here.
+**Validation status:** CPU checks passed on Mac and Linux. On an EIDF NVIDIA A100
+40 GB, the CUDA correctness suite, all four Compute Sanitizer tools and repeated
+CPU/GPU benchmark reproduction passed. See [validation](docs/validation.md) and
+[recorded measurements](results/a100-validation.json) for the exact tested source
+and limitations. GitHub CI has been prepared but has not run for this project.
 
 ## Run the CPU reference
 
@@ -87,8 +88,8 @@ reduce them to one scalar. The original device input stays intact for repetition
 
 Both paths warm up before repeated measurements. This is an educational custom
 kernel, not a claim to beat CUB or a tuned multithread CPU reduction. Float64
-throughput varies by GPU. Effective bandwidth, bottleneck and speedup claims need
-actual hardware measurements and profiling. See [measurement protocol](docs/benchmarking.md).
+throughput varies by GPU. The recorded A100 measurements are a bounded first run, not evidence of peak
+bandwidth or a general speedup; bottleneck attribution still needs profiling. See [measurement protocol](docs/benchmarking.md).
 
 Benchmark folders must be new. They preserve raw stdout/stderr, validation logs,
 compiler commands, source/binary hashes and min/median/max timings. A failed or
