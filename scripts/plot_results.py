@@ -20,9 +20,9 @@ def main():
     output = Path(sys.argv[1])
     output.mkdir(parents=True, exist_ok=False)
     record = json.loads((ROOT / 'results/a100-validation.json').read_text())
-    series = [('cpu', 'cpu_seconds', 'CPU · one thread', '#aebcca'),
-              ('cuda', 'resident_seconds', 'GPU resident', '#57d9c2'),
-              ('cuda', 'transfer_seconds', 'GPU + transfers', '#ffcc80')]
+    series = [('cpu', 'cpu_seconds', 'CPU · one thread', '#505c67'),
+              ('cuda', 'resident_seconds', 'GPU resident', '#126498'),
+              ('cuda', 'transfer_seconds', 'GPU + transfers', '#a24921')]
     sizes = record['checks']['benchmark']['sizes']
     values = {}
     for backend, field, _, _ in series:
@@ -44,20 +44,20 @@ def main():
         values[field] = rows
 
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 12,
-                         'svg.hashsalt': 'gpu-reduction-a100-v1'})
-    bg, ink, muted = '#111c26', '#f2f3eb', '#aebcca'
+                         'svg.hashsalt': 'gpu-reduction-a100-v2'})
+    bg, ink, muted = '#ffffff', '#202a32', '#4d5c69'
     fig = plt.figure(figsize=(12, 7.2), facecolor=bg)
-    fig.text(.065, .93, 'GPU REDUCTION', color=ink, fontsize=29, weight='bold')
-    fig.text(.065, .878, 'Transfers change the picture.', color=muted, fontsize=18)
-    fig.text(.065, .821, 'NVIDIA A100 40 GB  /  observed timings, 6 November 2026', color='#57d9c2', fontsize=12)
-    ax = fig.add_axes([.09, .235, .54, .5], facecolor=bg)
+    fig.text(.065, .93, 'GPU reduction on an NVIDIA A100', color=ink, fontsize=26, weight='bold')
+    fig.text(.065, .878, 'Elapsed time with and without host–device transfers', color=muted, fontsize=18)
+    fig.text(.065, .821, 'A100 40 GB  ·  6 November 2026', color='#126498', fontsize=12)
+    ax = fig.add_axes([.09, .235, .54, .5], facecolor='#f2f6fa')
     for j, (_, field, label, color) in enumerate(series):
         rows = values[field]
         xs = [i + (j - 1) * .15 for i in range(len(sizes))]
         medians = [statistics.median(r) for r in rows]
         lower = [m - min(r) for m, r in zip(medians, rows)]
         upper = [max(r) - m for m, r in zip(medians, rows)]
-        ax.errorbar(xs, medians, yerr=[lower, upper], fmt='o', markersize=7,
+        ax.errorbar(xs, medians, yerr=[lower, upper], fmt=('o', 's', '^')[j], markersize=7,
                     capsize=5, linewidth=1.7, color=color, label=label, zorder=3)
         for x, row in zip(xs, rows):
             ax.scatter([x + (k - 2) * .012 for k in range(len(row))], row,
@@ -71,8 +71,8 @@ def main():
     ax.set_yticks([.01, .1, 1, 5])
     ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f'{value:g}'))
     ax.tick_params(colors=muted, which='both')
-    for side in ax.spines.values(): side.set_color('#394752')
-    ax.grid(axis='y', which='major', color='#394752', alpha=.7)
+    for side in ax.spines.values(): side.set_color('#bcc9d3')
+    ax.grid(axis='y', which='major', color='#c6d1db', alpha=.85)
     ax.legend(loc='upper left', frameon=False, labelcolor=ink, fontsize=10)
 
     fig.text(.70, .71, f'{sizes[-1]:,} values', color=ink, fontsize=17, weight='bold')

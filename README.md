@@ -25,7 +25,8 @@ transfers. These measurements do not establish peak performance or general speed
 the host CPU model and clock/contention controls were not captured.
 
 The figure is generated directly from [raw measurements](results/a100-validation.json).
-To reproduce it, install Matplotlib in your own environment and run
+To reproduce it, install the optional plotting dependencies with
+`python3 -m pip install -r requirements-plot.txt` (Python 3.11+) and run
 `python3 scripts/plot_results.py NEW_DIRECTORY`. The script checks the stored
 summaries against all five samples and writes PNG and SVG files without overwriting
 an existing directory. Plotting is optional; building and testing need no Matplotlib.

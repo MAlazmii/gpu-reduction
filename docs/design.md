@@ -82,8 +82,8 @@ not mark CUDA compilation or execution complete. See validation.md for gates.
   remains blocked by no visible device and missing GPU-service configuration.
   No original coursework, driver, billing or cluster resources were changed.
 
-- The missing-config diagnosis was corrected: login shells set KUBECONFIG to the
-  existing `/kubernetes/config`. Read-only namespace/queue/quota checks succeeded.
+- The missing-config diagnosis was corrected after loading the existing login
+  environment. Read-only namespace/queue/quota checks succeeded.
   One bounded job in the existing allocation passed GPU tests, all four sanitizer
   tools and CPU/GPU benchmark reproduction on an A100 40 GB. Credentials and
   coursework remained unchanged. Full evidence was saved locally and on the VM.

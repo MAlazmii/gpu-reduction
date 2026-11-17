@@ -15,6 +15,43 @@ spec.loader.exec_module(benchmark)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_rejects_false_or_invalid_benchmark_evidence(self):
+        record = {
+            'backend': 'cpu', 'n': 4, 'pattern': 'cancellation',
+            'validation': 'pass', 'precision': 'float32 input / float64 accumulation',
+            'expected': 2, 'samples': [{'sum': 2, 'cpu_seconds': 0}],
+        }
+        self.assertEqual(benchmark.summarize_measurement(record, 'cpu', 4, 1),
+                         {'cpu_seconds': {'min': 0, 'median': 0, 'max': 0,
+                                          'includes_zero_resolution_sample': True}})
+        for field, value in (
+            ('sum', 1), ('sum', True), ('cpu_seconds', False),
+            ('cpu_seconds', -1), ('cpu_seconds', float('nan')),
+            ('cpu_seconds', float('inf')),
+        ):
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                benchmark.summarize_measurement(
+                    {**record, 'samples': [{**record['samples'][0], field: value}]},
+                    'cpu', 4, 1)
+
+        for field, value in (
+            ('pattern', 'ones'), ('precision', 'float32'), ('expected', 1),
+            ('backend', 'cuda'), ('n', True),
+        ):
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                benchmark.summarize_measurement({**record, field: value}, 'cpu', 4, 1)
+
+        gpu_sample = {'sum': 2, 'transfer_sum': 2, 'resident_seconds': 0.001,
+                      'transfer_seconds': 0.002}
+        gpu_record = {**record, 'backend': 'cuda', 'samples': [gpu_sample]}
+        gpu_summary = benchmark.summarize_measurement(gpu_record, 'cuda', 4, 1)
+        self.assertEqual(gpu_summary['transfer_seconds']['median'], 0.002)
+        for field, value in (('transfer_sum', 1), ('transfer_seconds', float('nan')),
+                             ('resident_seconds', -1)):
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                benchmark.summarize_measurement(
+                    {**gpu_record, 'samples': [{**gpu_sample, field: value}]}, 'cuda', 4, 1)
+
     def test_failed_command_preserves_output(self):
         with tempfile.TemporaryDirectory() as directory:
             prefix = Path(directory) / 'failure'

@@ -3,6 +3,7 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -60,6 +61,30 @@ def save(path, value):
     temporary.replace(path)
 
 
+def summarize_measurement(data, backend, n, repeats):
+    if (data['validation'] != 'pass' or data['backend'] != backend
+            or type(data['n']) is not int or data['n'] != n or data['pattern'] != 'cancellation'
+            or data['precision'] != 'float32 input / float64 accumulation'
+            or len(data['samples']) != repeats):
+        raise ValueError('Executable returned incomplete or mismatched evidence')
+    tail = (0, 100000000, 100000001, 1)[n % 4]
+    expected = 2 * (n // 4) + tail
+    sum_fields = ('sum',) if backend == 'cpu' else ('sum', 'transfer_sum')
+    sums = [data['expected'], *(sample[field] for sample in data['samples'] for field in sum_fields)]
+    if any(type(value) not in (int, float) or value != expected for value in sums):
+        raise ValueError('Executable returned an incorrect analytical sum')
+    fields = ('cpu_seconds',) if backend == 'cpu' else ('resident_seconds', 'transfer_seconds')
+    summary = {}
+    for field in fields:
+        values = [sample[field] for sample in data['samples']]
+        if any(type(value) not in (int, float) or not math.isfinite(value) or value < 0
+               for value in values):
+            raise ValueError('Executable returned an invalid duration')
+        summary[field] = {'min': min(values), 'median': statistics.median(values), 'max': max(values),
+                          'includes_zero_resolution_sample': any(value == 0 for value in values)}
+    return summary
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output', type=Path)
@@ -97,17 +122,9 @@ def main():
             for n in args.sizes:
                 command = [str(binary), str(n), 'cancellation', str(args.repeats)]
                 data = json.loads(execute(command, output / (backend + '-' + str(n))))
-                if (data['validation'] != 'pass' or data['backend'] != backend or data['n'] != n
-                        or len(data['samples']) != args.repeats):
-                    raise ValueError('Executable returned incomplete or mismatched evidence')
+                summary = summarize_measurement(data, backend, n, args.repeats)
                 if validate_build(binary) != manifest:
                     raise ValueError('Build changed while measuring')
-                fields = ('cpu_seconds',) if backend == 'cpu' else ('resident_seconds', 'transfer_seconds')
-                summary = {}
-                for field in fields:
-                    values = [sample[field] for sample in data['samples']]
-                    summary[field] = {'min': min(values), 'median': statistics.median(values), 'max': max(values),
-                                      'includes_zero_resolution_sample': any(v == 0 for v in values)}
                 report['runs'].append({'command': command, 'raw': data, 'summary': summary})
                 save(path, report)
         report['status'] = 'complete'

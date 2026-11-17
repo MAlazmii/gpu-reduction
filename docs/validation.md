@@ -1,9 +1,8 @@
 # Validation status
 
-Observed 6 November 2026. CPU validation passed on Mac and Linux. CUDA compilation
-passed with two VM toolchains; the full GPU validation then passed on an EIDF
-NVIDIA A100-SXM4-40GB using CUDA 13.0.48. GPU access was restored by loading the
-VM's existing login-shell configuration, without changing the credentials.
+The 6 November 2026 run validated the recorded source revision on Mac and Linux.
+CUDA compilation passed with two VM toolchains, and full GPU validation passed on
+an EIDF NVIDIA A100-SXM4-40GB using CUDA 13.0.48.
 
 | Check | Status | Evidence and limit |
 |---|---|---|
@@ -19,7 +18,6 @@ VM's existing login-shell configuration, without changing the credentials.
 | Compute Sanitizer | PASS on A100 | memcheck, racecheck, initcheck, synccheck; three cases each, zero reported errors/hazards |
 | GPU benchmark reproduction | PASS for recorded run | Three sizes, five repeats per backend; resident and transfer-inclusive timings; no peak-performance claim |
 | GitHub CPU workflow | Check exact revision in Actions | Ubuntu 24.04 with GCC and Clang; [workflow](https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml) |
-| Public release | NOT PUBLISHED | Hardware gates passed for tested source; GitHub CI and exact publication review remain |
 
 Local raw artifacts belong under ignored `results/local-*`. Each benchmark report
 records source/script/test hashes, build manifests and whether its Git working tree
@@ -28,6 +26,24 @@ The initial local benchmark predates the first commit and correctly records no
 commit rather than attributing measurements to an unrelated parent repository.
 
 ## Review findings resolved
+
+The 17 November 2026 review added two evidence-integrity regressions. A fresh
+Apple Clang CPU build passed all 12 test methods, and the rebuilt
+AddressSanitizer/UBSan executable passed all four contract methods. A CPU
+benchmark with three repetitions at seven lengths, including each cancellation
+pattern remainder, completed with validated sums. Clang static analysis reported
+no findings in the two CPU translation units.
+
+The build wrapper now requires a newly produced executable before publishing its
+manifest. A successful compiler command that leaves no output cannot validate an
+older binary. The benchmark independently checks analytical sums and rejects
+negative, non-finite or boolean durations and mismatched experiment metadata.
+Zero-duration samples retain their recorded timer-resolution flag.
+
+The four C++ and CUDA source files match their archived A100 fingerprints. All
+six archived CPU/GPU measurement summaries reproduce through the revised evidence
+checker. This review exercised CPU tooling, and the A100 validation retains its
+6 November date and source fingerprints.
 
 1. Git can discover an enclosing repository. The benchmark now accepts Git
    metadata only when the discovered repository root is exactly this project.
@@ -70,19 +86,17 @@ was compiled only.
 
 Downloaded logs, build manifests and raw CPU measurements are saved privately in
 `results/eidf-2026-11-06-71a3fe7/`. The transferred archive checksum matched before
-extraction. Every source hash in both CUDA manifests and the CPU manifest, plus
-the benchmark source/script/test hashes, matches the local project. Subsequent
-status-document edits do not change these implementation files. Benchmark Git
+extraction. Both CUDA manifests, the CPU manifest, and the benchmark source,
+script and test hashes matched the transferred source on retrieval. Use those
+recorded hashes when comparing later revisions. Benchmark Git
 metadata is null on the source-only VM copy; the verified archive and this explicit
 source commit provide its provenance instead of inventing a remote Git history.
 
 ## GPU access diagnosis and completed run
 
-The early non-interactive SSH probe did not load the login environment. It found
-no default kubeconfig and incorrectly inferred that the GPU-service configuration
-was missing. The existing file is `/kubernetes/config`; a login shell sets
-`KUBECONFIG` to this path. Its context and project access were verified live.
-No credentials were copied, displayed, edited or committed.
+The non-interactive SSH probe missed the login environment. A login shell loaded
+the existing Kubernetes configuration, and project access was verified before
+the GPU run.
 
 A single job used one A100 GPU, two CPU cores and 2 GiB RAM within the existing
 project quota. It had a 900-second hard deadline, no retries, no service-account
@@ -107,10 +121,9 @@ promise that every CUDA 13/driver combination is supported.
 
 Public-safe raw samples and source hashes: [a100-validation.json](../results/a100-validation.json).
 Full private artifacts: `results/eidf-gpu-2026-11-06-71a3fe7/`.
-Host CPU model and clock/contention controls were not captured; do not turn these
-measurements into hardware-independent speedup claims. The GitHub repository is private. Its [CPU workflow](https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml)
-checks uploaded commits separately from this recorded GPU run; use the exact run
-conclusion rather than treating historical evidence as validation of future edits.
+The run records the A100 configuration. The host CPU model and clock and
+contention controls are unknown. GitHub's [CPU workflow](https://github.com/MAlazmii/gpu-reduction/actions/workflows/cpu-validation.yml)
+reports CPU checks by commit. This A100 run applies to the recorded source.
 
 After verified retrieval, the temporary job, its pod and its source ConfigMap were
 removed. The original VM configuration and all other workloads were left unchanged.

@@ -25,7 +25,7 @@
   "compute_sanitizer": "PASS: memcheck/racecheck/initcheck/synccheck; three cases each",
   "gpu_performance": "Benchmark reproduction PASS: three sizes x five repeats; no general speedup claim",
   "github_ci": "Exact-commit results recorded in the linked GitHub Actions workflow",
-  "gpu_testing": "Completed using existing EIDF quota and original /kubernetes/config via login shell",
+  "gpu_testing": "Completed using existing EIDF quota",
   "paid_usage_enabled": false,
   "eidf": {
     "source_commit": "71a3fe79eb34ffaf80ebd0918db80813a798fcaa",
