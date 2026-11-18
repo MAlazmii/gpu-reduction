@@ -1,0 +1,73 @@
+name: gpu-sim
+
+# Optional, non-required check. The hosted runners have no GPU, so this builds
+# the CUDA backend and runs the Python tests on a simulated NVIDIA H100
+# (https://github.com/pantheongpu/pantheonsim). A simulator cannot reproduce
+# hardware-specific behavior or timing, so it complements the real-GPU checks
+# in CONTRIBUTING.md and does not replace them.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "scripts/build.py"
+      - "Makefile"
+      - ".github/workflows/gpu-sim.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gpu-sim-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cuda-sim:
+    name: CUDA / simulated H100
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+
+      - name: Set up the simulated GPU and CUDA toolkit
+        uses: pantheongpu/setup-pantheonsim@deff5781e8adfd83dec98dd5242dcbc96a564773 # v0.1.10
+        with:
+          gpu: nvidia/h100
+          cuda-toolkit: "13.0"
+
+      # The simulator runs PTX only (compute_90, no SASS) and needs a shared
+      # CUDA runtime.
+      - name: Build CUDA backend
+        run: |
+          set -euo pipefail
+          make cuda CUDA_ARCH=compute_90 NVCCFLAGS="-O3 -std=c++17 -lineinfo -cudart shared"
+
+      # The tests start the binary themselves, so point them at a wrapper that
+      # runs it under vgpu and keeps a copy of its stderr for the checks below.
+      - name: Run CUDA tests
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/vgpu-stderr.log"
+          wrapper="$RUNNER_TEMP/reduce_vgpu"
+          printf '#!/bin/bash\nexec vgpu run "%s/build/reduce_cuda" "$@" 2> >(tee -a "%s" >&2)\n' "$PWD" "$log" > "$wrapper"
+          chmod +x "$wrapper"
+          : > "$log"
+
+          # One run on the device: it must report the simulated H100.
+          out=$("$wrapper" 1048577 cancellation 1)
+          echo "$out"
+          echo "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert "H100" in d["device"], d["device"]; assert d["validation"]=="pass"'
+
+          REDUCTION_BACKEND=cuda REDUCTION_BINARY="$wrapper" \
+            python3 -m unittest discover -s tests -p test_reduction.py -v 2>&1 | tee "$RUNNER_TEMP/unittest.log"
+
+          cat "$log"
+          if grep -Ei "VirtualGPU error|no cuda device|skipped" "$RUNNER_TEMP/unittest.log" "$log"; then
+            echo "::error::simulator error, missing device or skipped tests"
+            exit 1
+          fi
+          grep -q "^OK" "$RUNNER_TEMP/unittest.log"
